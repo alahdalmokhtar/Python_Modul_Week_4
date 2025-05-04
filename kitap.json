@@ -1,10 +1,18 @@
 {
-    "": {
-        "barcode": "4",
-        "language": "yy",
-        "price": "uu",
-        "book_name": "",
-        "publisher": "hh",
-        "author": "h"
+    "hh": {
+        "barcode": "55",
+        "language": "tt",
+        "price": "66",
+        "book_name": "hh",
+        "publisher": "gg",
+        "author": ""
+    },
+    "uu": {
+        "barcode": "11",
+        "language": "ee",
+        "price": "44",
+        "book_name": "uu",
+        "publisher": "tt",
+        "author": "gg"
     }
 }
