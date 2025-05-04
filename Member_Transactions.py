@@ -6,6 +6,7 @@ import zamen
 file_path = 'members.json'
 book_path = 'kitap.json'
 transaction_id=0
+global borrow_date
 # Check if the file exists, if not create it with an empty dictionary
 if not os.path.exists(book_path):
     with open(book_path, 'w') as file:
@@ -25,6 +26,12 @@ def load_members():
 def load_members():
     try:
         with open('members.json', 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+def load_user():
+    try:
+        with open('user.json', 'r') as f:
             return json.load(f)
     except FileNotFoundError:
         return {}
@@ -211,7 +218,7 @@ def borrow_book():
     books = load_books()
     members=load_members()
     transactions=load_transactions()
-    
+    borrow_date= (datetime.now()).strftime("%Y-%m-%d %H:%M:%S")
     # Check if book exists
     if book_name not in books:
         print(f"❌ Book '{book_name}' does not exist!")
@@ -235,7 +242,7 @@ def borrow_book():
         "member_tel": member.get('tel', ''),
         "member_adres": member.get('adres', ''),
         "book_barcode": book.get('barcode', ''),
-        "book_name": book.get('name', ''),
+        "book_name": book.get('book_name', ''),
         "book_author": book.get('author', ''),
         "book_publisher": book.get('publisher', ''),
         "book_price": book.get('price', ''),
@@ -256,37 +263,61 @@ def borrow_book():
 
 def return_book():
     """Return a book"""
-    print("\n--- Return Book ---")
-    
+    file_user="user.json"
+    with open (file_user,'r') as f:
+        user_data=json.load(f)
+ 
+    print("--- Return Book ---")
+    #global borrow_date
     book_name = input("Book title: ")
     member_id = input("Member ID: ")
     
     # Load existing books first
-    transaction = load_transactions()
+    #transaction = load_transactions()
+    users=load_user()
     book=load_books()
-    # Check if book exists
-    if book_name not in transaction:
-        print(f"❌ Book '{book_name}' does not exist!")
-        return
-    
-    # Add new transaction for returning the book
-    add_transaction(book_name,member_id)   
-    
-    if book_name  in transaction:
-        print(f"❌ Book '{book_name}'  exist!")
-        return
-    barcode=input("the  new barcode : ")
-    # Add new transaction
-    book[book_name] ={
-       
-        'barcode': barcode,
-        'language': '',
-        'price': '',
-        'book_name': book_name,
-        'publisher': '',
-        'author': ''
+    add_transaction(book_name,member_id)
 
+    if book_name not in users:
+        print(f"Book '{book_name}' does not exist!")
+    for bok in user_data:
+       if book_name ==bok['book_name']:
+           add_transaction(book_name,member_id)
+           print("\n--- Return Book ---")
+          # borrow_date=data['borrow_date']
+           return_date=bok['return_date']
+           book[book_name] ={
+       
+        'barcode':bok['book_barcode'],
+        'language': bok['book_language'],
+        'price': bok['book_price'],
+        'book_name': book_name,
+        'publisher': bok['book_publisher'],
+        'author': bok['book_author']
     }
+        
+                 
+    # Add new transaction for returning the book
+    #add_transaction(book_name,member_id) 
+
+    #barcode=input("the  new barcode : ")
+
+    # Add new transaction
+  
+   
+    #global borrow_date
+   
+    
+    # Load existing books first
+    transaction = load_transactions()
+    #book=load_books()
+
+    # Add new transaction for returning the book
+       
+
+    #barcode=input("the  new barcode : ")
+    # Add new transaction
+      
     save_books(book)
     print(f"\n✅ Book '{book_name}' returned successfully!")
 
